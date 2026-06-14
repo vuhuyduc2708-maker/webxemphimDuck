@@ -1,0 +1,1815 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CineLight – Xem Phim Online</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ===== BIẾN MÀU & FONT ===== */
+    :root {
+      --bg: #f7f5f2;
+      --white: #ffffff;
+      --text: #1a1a2e;
+      --text-light: #6b7280;
+      --accent: #e63946;
+      --accent-soft: #ffeaec;
+      --card-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      --radius: 14px;
+      --font-title: 'Playfair Display', serif;
+      --font-body: 'DM Sans', sans-serif;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    button, input {
+      font-family: inherit;
+    }
+
+    /* ===== THANH ĐIỀU HƯỚNG ===== */
+    nav {
+      background: var(--white);
+      padding: 0 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      min-height: 64px;
+      gap: 18px;
+    }
+
+    .logo {
+      font-family: var(--font-title);
+      font-size: 26px;
+      color: var(--accent);
+      letter-spacing: -0.5px;
+      white-space: nowrap;
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+
+    .nav-menu {
+      list-style: none;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .nav-menu li {
+      position: relative;
+    }
+
+    .nav-menu li a {
+      display: block;
+      text-decoration: none;
+      color: var(--text);
+      font-size: 14px;
+      font-weight: 500;
+      padding: 8px 12px;
+      border-radius: 8px;
+      transition: background 0.2s, color 0.2s;
+      white-space: nowrap;
+    }
+
+    .nav-menu li a:hover {
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    .nav-menu li a.active {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .nav-menu li a .arrow {
+      font-size: 10px;
+      margin-left: 4px;
+      display: inline-block;
+    }
+
+    .nav-menu li .dropdown {
+      list-style: none;
+      display: none;
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 0;
+      background: var(--white);
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+      min-width: 180px;
+      padding: 8px;
+      z-index: 300;
+    }
+
+    .nav-menu li:hover .dropdown {
+      display: block;
+    }
+
+    .nav-menu li .dropdown li a {
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-size: 13px;
+      color: var(--text);
+    }
+
+    .nav-menu li .dropdown li a:hover {
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    .search-bar {
+      display: flex;
+      align-items: center;
+      background: var(--bg);
+      border: 2px solid #e5e7eb;
+      border-radius: 50px;
+      padding: 8px 14px;
+      gap: 8px;
+      width: 240px;
+      transition: border-color 0.2s;
+      flex-shrink: 0;
+    }
+
+    .search-bar:focus-within {
+      border-color: var(--accent);
+    }
+
+    .search-bar input {
+      border: none;
+      background: transparent;
+      font-size: 14px;
+      color: var(--text);
+      outline: none;
+      width: 100%;
+    }
+
+    .search-icon {
+      font-size: 16px;
+      color: var(--text-light);
+    }
+
+    .auth-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .user-greeting {
+      max-width: 150px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-size: 13px;
+      color: var(--text-light);
+      font-weight: 600;
+    }
+
+    /* ===== BUTTONS ===== */
+    .btn-primary,
+    .btn-secondary,
+    .btn-outline,
+    .btn-danger {
+      border: none;
+      border-radius: 50px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: white;
+      padding: 13px 28px;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(230,57,70,0.4);
+    }
+
+    .btn-secondary {
+      background: #f3f4f6;
+      color: var(--text);
+      padding: 12px 22px;
+    }
+
+    .btn-secondary:hover {
+      background: #e5e7eb;
+    }
+
+    .btn-outline {
+      background: white;
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      padding: 9px 14px;
+    }
+
+    .btn-outline:hover {
+      background: var(--accent-soft);
+    }
+
+    .btn-danger {
+      background: #fee2e2;
+      color: #b91c1c;
+      padding: 9px 14px;
+    }
+
+    .btn-danger:hover {
+      background: #fecaca;
+    }
+
+    /* ===== BANNER ===== */
+    .banner {
+      position: relative;
+      height: 480px;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%);
+      display: flex;
+      align-items: center;
+      padding: 0 60px;
+      overflow: hidden;
+    }
+
+    .banner::before {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: 0;
+      width: 50%;
+      height: 100%;
+      background: url('https://image.tmdb.org/t/p/w780/q6y0Go1tsGEsmtFryDOJo3dEmqu.jpg') center/cover;
+      opacity: 0.25;
+    }
+
+    .banner-content {
+      position: relative;
+      z-index: 2;
+      max-width: 560px;
+    }
+
+    .banner-tag {
+      display: inline-block;
+      background: var(--accent);
+      color: white;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 50px;
+      margin-bottom: 14px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .banner h1 {
+      font-family: var(--font-title);
+      font-size: 48px;
+      color: white;
+      line-height: 1.15;
+      margin-bottom: 14px;
+    }
+
+    .banner p {
+      color: #c9d1d9;
+      font-size: 15px;
+      line-height: 1.7;
+      margin-bottom: 28px;
+    }
+
+    .banner-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 28px;
+      color: #cbd5e1;
+      font-size: 14px;
+    }
+
+    .banner-meta span {
+      background: rgba(255,255,255,0.08);
+      border-radius: 50px;
+      padding: 5px 10px;
+    }
+
+    /* ===== MAIN ===== */
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      gap: 16px;
+    }
+
+    .section-title {
+      font-family: var(--font-title);
+      font-size: 26px;
+      color: var(--text);
+    }
+
+    .section-title span {
+      color: var(--accent);
+    }
+
+    .section-note {
+      color: var(--text-light);
+      font-size: 14px;
+      line-height: 1.6;
+      margin: -12px 0 24px;
+    }
+
+    .see-all {
+      font-size: 14px;
+      color: var(--accent);
+      cursor: pointer;
+      font-weight: 600;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .movie-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 24px;
+      margin-bottom: 50px;
+    }
+
+    .movie-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      overflow: hidden;
+      cursor: pointer;
+      box-shadow: var(--card-shadow);
+      transition: transform 0.2s, box-shadow 0.2s;
+      position: relative;
+    }
+
+    .movie-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 32px rgba(0,0,0,0.14);
+    }
+
+    .movie-poster-wrap {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .movie-poster {
+      width: 100%;
+      aspect-ratio: 2/3;
+      object-fit: cover;
+      display: block;
+      background: #e5e7eb;
+    }
+
+    .favorite-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      border: none;
+      background: rgba(255,255,255,0.94);
+      color: var(--accent);
+      border-radius: 50%;
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+      font-size: 16px;
+    }
+
+    .movie-info {
+      padding: 12px;
+    }
+
+    .movie-title {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .movie-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .movie-genre {
+      font-size: 12px;
+      color: var(--text-light);
+    }
+
+    .movie-rating {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent);
+      background: var(--accent-soft);
+      padding: 2px 8px;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
+
+    .movie-tags {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .tag-small {
+      font-size: 11px;
+      color: #475569;
+      background: #f1f5f9;
+      border-radius: 50px;
+      padding: 3px 8px;
+    }
+
+    #search-results {
+      display: none;
+    }
+
+    .empty-state {
+      background: white;
+      border-radius: 16px;
+      padding: 28px;
+      color: var(--text-light);
+      box-shadow: var(--card-shadow);
+      margin-bottom: 40px;
+      line-height: 1.7;
+    }
+
+    /* ===== MODAL CHI TIẾT PHIM ===== */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.56);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-overlay.open {
+      display: flex;
+    }
+
+    .modal {
+      background: var(--white);
+      border-radius: 20px;
+      max-width: 760px;
+      width: 100%;
+      max-height: 92vh;
+      overflow-y: auto;
+      animation: slideUp 0.3s ease;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .modal-poster {
+      width: 100%;
+      height: 300px;
+      object-fit: cover;
+      object-position: top;
+      display: block;
+      background: #e5e7eb;
+    }
+
+    .video-box {
+      display: none;
+      background: #000;
+      aspect-ratio: 16 / 9;
+      width: 100%;
+    }
+.video-box video {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+  background: #000;
+}
+
+    .modal-body {
+      padding: 24px;
+    }
+
+    .modal-top {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .modal-tag {
+      display: inline-block;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 50px;
+      margin-right: 6px;
+      margin-bottom: 6px;
+    }
+
+    .modal-title {
+      font-family: var(--font-title);
+      font-size: 30px;
+      margin-bottom: 10px;
+    }
+
+    .modal-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--text-light);
+      margin-bottom: 14px;
+    }
+
+    .modal-meta span {
+      background: #f8fafc;
+      border-radius: 50px;
+      padding: 5px 10px;
+    }
+
+    .modal-desc {
+      font-size: 14px;
+      line-height: 1.7;
+      color: #4b5563;
+      margin-bottom: 18px;
+    }
+
+    .modal-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-close {
+      margin-left: auto;
+      background: none;
+      border: none;
+      font-size: 22px;
+      cursor: pointer;
+      color: var(--text-light);
+      line-height: 1;
+    }
+
+    .rating-box {
+      margin: 18px 0;
+      padding: 16px;
+      background: #f8fafc;
+      border-radius: 16px;
+    }
+
+    .rating-title {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .stars {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+
+    .star-btn {
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      font-size: 26px;
+      color: #cbd5e1;
+      transition: transform 0.15s, color 0.15s;
+    }
+
+    .star-btn:hover {
+      transform: scale(1.12);
+    }
+
+    .star-btn.active {
+      color: #f59e0b;
+    }
+
+    .rating-text {
+      color: var(--text-light);
+      font-size: 13px;
+      margin-left: 8px;
+    }
+
+    /* ===== MODAL ĐĂNG NHẬP / ĐĂNG KÝ ===== */
+    .auth-modal {
+      background: white;
+      width: 100%;
+      max-width: 420px;
+      border-radius: 20px;
+      padding: 24px;
+      animation: slideUp 0.3s ease;
+    }
+
+    .auth-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+    }
+
+    .auth-head h2 {
+      font-family: var(--font-title);
+      color: var(--text);
+      font-size: 28px;
+    }
+
+    .auth-tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      background: #f3f4f6;
+      border-radius: 999px;
+      padding: 4px;
+      margin-bottom: 18px;
+    }
+
+    .auth-tab {
+      border: none;
+      background: transparent;
+      padding: 10px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: 700;
+      color: var(--text-light);
+    }
+
+    .auth-tab.active {
+      background: white;
+      color: var(--accent);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    }
+
+    .auth-form {
+      display: none;
+    }
+
+    .auth-form.active {
+      display: block;
+    }
+
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: #374151;
+    }
+
+    .form-group input {
+      width: 100%;
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 12px 14px;
+      outline: none;
+      font-size: 14px;
+      transition: border 0.2s;
+    }
+
+    .form-group input:focus {
+      border-color: var(--accent);
+    }
+
+    .form-note {
+      font-size: 12px;
+      color: var(--text-light);
+      line-height: 1.6;
+      margin-top: 12px;
+    }
+
+    /* ===== TOAST ===== */
+    .toast {
+      position: fixed;
+      right: 22px;
+      bottom: 22px;
+      background: #111827;
+      color: white;
+      border-radius: 12px;
+      padding: 12px 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.24);
+      z-index: 500;
+      display: none;
+      max-width: 320px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .toast.show {
+      display: block;
+      animation: toastIn 0.25s ease;
+    }
+
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 1000px) {
+      nav {
+        align-items: flex-start;
+        flex-wrap: wrap;
+        height: auto;
+        padding: 14px 20px;
+      }
+      .nav-menu {
+        order: 3;
+        width: 100%;
+        overflow-x: auto;
+        padding-bottom: 4px;
+      }
+      .search-bar {
+        width: 220px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .banner {
+        height: auto;
+        padding: 42px 24px;
+      }
+      .banner h1 {
+        font-size: 32px;
+      }
+      .search-bar {
+        width: 100%;
+        order: 2;
+      }
+      .auth-actions {
+        width: 100%;
+        order: 4;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+      }
+      main {
+        padding: 30px 16px;
+      }
+      .movie-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      }
+      .modal-poster {
+        height: 220px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ============================
+     THANH ĐIỀU HƯỚNG
+============================= -->
+<nav>
+  <div class="logo" onclick="goHome(event)">🎬 CineLight</div>
+
+  <ul class="nav-menu">
+    <li>
+      <a href="#" class="active" onclick="goHome(event)">🏠 Trang Chủ</a>
+    </li>
+
+    <li>
+      <a href="#">🎭 Thể Loại <span class="arrow">▾</span></a>
+      <ul class="dropdown">
+        <li><a href="#" onclick="filterByGenre(event, 'Hành Động')">⚔️ Hành Động</a></li>
+        <li><a href="#" onclick="filterByGenre(event, 'Hoạt Hình')">🎨 Hoạt Hình</a></li>
+        <li><a href="#" onclick="filterByGenre(event, 'Kinh Dị')">👻 Kinh Dị</a></li>
+        <li><a href="#" onclick="filterByGenre(event, 'Tình Cảm')">💕 Tình Cảm</a></li>
+        <li><a href="#" onclick="filterByGenre(event, 'Hài Hước')">😂 Hài Hước</a></li>
+      </ul>
+    </li>
+
+    <li>
+      <a href="#">📺 Phim Bộ <span class="arrow">▾</span></a>
+      <ul class="dropdown">
+        <li><a href="#" onclick="filterByType(event, 'Phim Bộ', 'Hàn Quốc')">🇰🇷 Hàn Quốc</a></li>
+        <li><a href="#" onclick="filterByType(event, 'Phim Bộ', 'Trung Quốc')">🇨🇳 Trung Quốc</a></li>
+        <li><a href="#" onclick="filterByType(event, 'Phim Bộ', 'Việt Nam')">🇻🇳 Việt Nam</a></li>
+        <li><a href="#" onclick="filterByType(event, 'Phim Bộ', 'Mỹ')">🇺🇸 Mỹ</a></li>
+      </ul>
+    </li>
+
+    <li>
+      <a href="#">🎬 Phim Lẻ <span class="arrow">▾</span></a>
+      <ul class="dropdown">
+        <li><a href="#" onclick="filterByType(event, 'Phim Lẻ', 'Mỹ')">🇺🇸 Mỹ</a></li>
+        <li><a href="#" onclick="filterByType(event, 'Phim Lẻ', 'Hàn Quốc')">🇰🇷 Hàn Quốc</a></li>
+        <li><a href="#" onclick="filterByType(event, 'Phim Lẻ', 'Nhật Bản')">🇯🇵 Nhật Bản</a></li>
+        <li><a href="#" onclick="filterByType(event, 'Phim Lẻ', 'Châu Âu')">🌍 Châu Âu</a></li>
+      </ul>
+    </li>
+
+    <li>
+      <a href="#">🌏 Quốc Gia <span class="arrow">▾</span></a>
+      <ul class="dropdown">
+        <li><a href="#" onclick="filterByCountry(event, 'Mỹ')">🇺🇸 Mỹ</a></li>
+        <li><a href="#" onclick="filterByCountry(event, 'Hàn Quốc')">🇰🇷 Hàn Quốc</a></li>
+        <li><a href="#" onclick="filterByCountry(event, 'Trung Quốc')">🇨🇳 Trung Quốc</a></li>
+        <li><a href="#" onclick="filterByCountry(event, 'Nhật Bản')">🇯🇵 Nhật Bản</a></li>
+        <li><a href="#" onclick="filterByCountry(event, 'Việt Nam')">🇻🇳 Việt Nam</a></li>
+      </ul>
+    </li>
+
+    <li><a href="#" onclick="showFavorites(event)">❤️ Yêu Thích</a></li>
+    <li><a href="#" onclick="showHistory(event)">🕘 Lịch Sử</a></li>
+  </ul>
+
+  <div class="search-bar">
+    <span class="search-icon">🔍</span>
+    <input
+      type="text"
+      id="search-input"
+      placeholder="Tìm phim, thể loại, quốc gia..."
+      oninput="searchMovies(this.value)"
+    />
+  </div>
+
+  <div class="auth-actions" id="auth-actions"></div>
+</nav>
+
+<!-- ============================
+     BANNER PHIM NỔI BẬT
+============================= -->
+<div class="banner">
+  <div class="banner-content">
+    <div class="banner-tag">🔥 Đang Hot</div>
+    <h1>Dune: Part Two</h1>
+    <p>Hành trình của Paul Atreides tiếp tục khi anh kết hợp với người Fremen để chiến đấu chống lại những kẻ thù đã tàn phá gia đình mình.</p>
+    <div class="banner-meta">
+      <span>⭐ 8.5</span>
+      <span>🕐 166 phút</span>
+      <span>📅 2024</span>
+      <span>🎬 Phim Lẻ</span>
+      <span>🌏 Mỹ</span>
+    </div>
+    <button class="btn-primary" onclick="playMovie(0)">▶ Xem Ngay</button>
+  </div>
+</div>
+
+<!-- ============================
+     NỘI DUNG CHÍNH
+============================= -->
+<main>
+  <div id="search-results">
+    <div class="section-header">
+      <h2 class="section-title" id="filter-title">Kết quả <span>tìm kiếm</span></h2>
+      <a class="see-all" onclick="goHome(event)">← Về trang chủ</a>
+    </div>
+    <div id="filter-note" class="section-note"></div>
+    <div class="movie-grid" id="search-grid"></div>
+  </div>
+
+  <div id="main-content">
+    <div id="sections-container"></div>
+  </div>
+</main>
+
+<!-- ============================
+     MODAL CHI TIẾT PHIM
+============================= -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModalOnOverlay(event)">
+  <div class="modal">
+    <img class="modal-poster" id="modal-poster" src="" alt="" />
+    <div class="video-box" id="modal-player-wrap">
+  <video id="modal-player" controls playsinline preload="metadata">
+    Trình duyệt của bạn không hỗ trợ phát video.
+  </video>
+</div>
+
+    <div class="modal-body">
+      <div class="modal-top">
+        <div id="modal-tags"></div>
+        <button class="btn-close" onclick="closeModal()">✕</button>
+      </div>
+
+      <div class="modal-title" id="modal-title"></div>
+      <div class="modal-meta" id="modal-meta"></div>
+      <p class="modal-desc" id="modal-desc"></p>
+
+      <div class="rating-box">
+        <div class="rating-title">Đánh giá của bạn</div>
+        <div class="stars" id="rating-stars"></div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-primary" id="watch-btn" onclick="playMovie(currentMovieId)">▶ Xem Ngay</button>
+        <button class="btn-secondary" id="favorite-btn" onclick="toggleFavorite(currentMovieId)">+ Danh Sách</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================
+     MODAL ĐĂNG NHẬP / ĐĂNG KÝ
+============================= -->
+<div class="modal-overlay" id="auth-overlay" onclick="closeAuthOnOverlay(event)">
+  <div class="auth-modal">
+    <div class="auth-head">
+      <h2 id="auth-title">Đăng nhập</h2>
+      <button class="btn-close" onclick="closeAuth()">✕</button>
+    </div>
+
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="login-tab" onclick="switchAuth('login')">Đăng nhập</button>
+      <button class="auth-tab" id="register-tab" onclick="switchAuth('register')">Đăng ký</button>
+    </div>
+
+    <form class="auth-form active" id="login-form" onsubmit="handleLogin(event)">
+      <div class="form-group">
+        <label for="login-email">Email</label>
+        <input type="email" id="login-email" placeholder="Nhập email" required />
+      </div>
+      <div class="form-group">
+        <label for="login-password">Mật khẩu</label>
+        <input type="password" id="login-password" placeholder="Nhập mật khẩu" required />
+      </div>
+      <button class="btn-primary" type="submit" style="width:100%">Đăng nhập</button>
+      <p class="form-note">Tài khoản được lưu bằng localStorage để mô phỏng chức năng đăng nhập trên một file HTML.</p>
+    </form>
+
+    <form class="auth-form" id="register-form" onsubmit="handleRegister(event)">
+      <div class="form-group">
+        <label for="register-name">Họ tên</label>
+        <input type="text" id="register-name" placeholder="Nhập họ tên" required />
+      </div>
+      <div class="form-group">
+        <label for="register-email">Email</label>
+        <input type="email" id="register-email" placeholder="Nhập email" required />
+      </div>
+      <div class="form-group">
+        <label for="register-password">Mật khẩu</label>
+        <input type="password" id="register-password" placeholder="Tối thiểu 6 ký tự" minlength="6" required />
+      </div>
+      <button class="btn-primary" type="submit" style="width:100%">Tạo tài khoản</button>
+      <p class="form-note">Sau khi đăng ký, bạn có thể lưu yêu thích, lịch sử xem và đánh giá phim.</p>
+    </form>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- ============================
+     DỮ LIỆU & JAVASCRIPT
+============================= -->
+<script>
+  // ========================================
+  // DỮ LIỆU PHIM MẪU
+  // Đã bổ sung type và country để lọc phim bộ/phim lẻ/quốc gia chính xác hơn.
+  // ========================================
+  const defaultMovies = [
+    {
+      id: 0,
+      title: "Dune: Part Two",
+      genre: "Hành Động",
+      type: "Phim Lẻ",
+      country: "Mỹ",
+      rating: "8.5",
+      year: "2024",
+      duration: "166 phút",
+      desc: "Paul Atreides kết hợp với người Fremen để trả thù những kẻ đã phá hủy gia đình anh và chinh phục vũ trụ.",
+      poster: "https://image.tmdb.org/t/p/w400/1pdfLvkbY9ohJlCjQH2CZjjYVvJ.jpg",
+      video: "Deadpool.mp4"
+    },
+    {
+      id: 1,
+      title: "Deadpool & Wolverine",
+      genre: "Hành Động",
+      type: "Phim Lẻ",
+      country: "Mỹ",
+      rating: "8.0",
+      year: "2024",
+      duration: "127 phút",
+      desc: "Deadpool và Wolverine bắt buộc phải hợp tác để cứu vũ trụ Marvel khỏi một mối đe dọa khổng lồ.",
+      poster: "https://image.tmdb.org/t/p/w400/8cdWjvZQUExUUTzyp4t6EDMubfO.jpg",
+     video: "Deadpool.mp4"
+    },
+    {
+      id: 2,
+      title: "Oppenheimer",
+      genre: "Hành Động",
+      type: "Phim Lẻ",
+      country: "Mỹ",
+      rating: "8.9",
+      year: "2023",
+      duration: "180 phút",
+      desc: "Câu chuyện về cha đẻ của bom nguyên tử – J. Robert Oppenheimer và dự án Manhattan bí ẩn.",
+      poster: "https://image.tmdb.org/t/p/w400/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg",
+      video: "Doraemon.mp4"
+    },
+    {
+      id: 3,
+      title: "Mission: Impossible 7",
+      genre: "Hành Động",
+      type: "Phim Lẻ",
+      country: "Mỹ",
+      rating: "7.7",
+      year: "2023",
+      duration: "163 phút",
+      desc: "Ethan Hunt và đội IMF đối mặt với kẻ thù nguy hiểm nhất từ trước đến nay – một thực thể AI không thể kiểm soát.",
+      poster: "https://image.tmdb.org/t/p/w400/NNxYkU70HPurnNCSiCjYAmacwm.jpg",
+     video: "Doraemon.mp4"
+    },
+    {
+      id: 4,
+      title: "Inside Out 2",
+      genre: "Hoạt Hình",
+      type: "Phim Lẻ",
+      country: "Mỹ",
+      rating: "7.8",
+      year: "2024",
+      duration: "100 phút",
+      desc: "Riley bước vào tuổi teen và những cảm xúc mới xuất hiện, gây ra sự hỗn loạn bên trong tâm trí cô bé.",
+      poster: "https://image.tmdb.org/t/p/w400/vpnVM9B6NMmQpWeZvzLvDESb2QY.jpg",
+      video: "inside out.mp4"
+    },
+    {
+      id: 5,
+      title: "The Wild Robot",
+      genre: "Hoạt Hình",
+      type: "Phim Lẻ",
+      country: "Mỹ",
+      rating: "8.3",
+      year: "2024",
+      duration: "102 phút",
+      desc: "Một robot thức dậy trên hòn đảo hoang dã và phải học cách sống sót giữa thiên nhiên và các loài động vật.",
+      poster: "https://image.tmdb.org/t/p/w400/wTnV3PCVW5O92JMrFvvrRcV39RU.jpg",
+       video: "Doraemon.mp4"
+    },
+    {
+      id: 6,
+      title: "Elemental",
+      genre: "Hoạt Hình",
+      type: "Phim Lẻ",
+      country: "Mỹ",
+      rating: "6.8",
+      year: "2023",
+      duration: "101 phút",
+      desc: "Trong một thành phố nơi các nguyên tố Lửa, Nước, Đất và Khí cùng tồn tại, hai linh hồn trái ngược nhau lại tìm thấy nhau.",
+      poster: "https://image.tmdb.org/t/p/original/4Y1WNkd88JXmGfhtWR7dmDAo1T2.jpg",
+      video: "Elemental.mp4"
+    },
+    {
+      id: 7,
+      title: "Moana 2",
+      genre: "Hoạt Hình",
+      type: "Phim Lẻ",
+      country: "Mỹ",
+      rating: "6.5",
+      year: "2024",
+      duration: "100 phút",
+      desc: "Moana thực hiện một cuộc hành trình mới đến vùng biển chưa từng khám phá sau khi nhận lời kêu gọi từ tổ tiên.",
+      poster: "https://image.tmdb.org/t/p/w400/aLVkiINlIeCkcZIzb7XHzPYgO6L.jpg",
+      video: "Doraemon.mp4"
+    },
+    {
+      id: 8,
+      title: "A Quiet Place: Day One",
+      genre: "Kinh Dị",
+      type: "Phim Lẻ",
+      country: "Mỹ",
+      rating: "7.0",
+      year: "2024",
+      duration: "99 phút",
+      desc: "Câu chuyện về những ngày đầu tiên khi những sinh vật săn mồi bằng âm thanh xâm chiếm Trái Đất.",
+      poster: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqtJY6N-_WoqhtNme5wmAPALwVdsG4o7KUPA&s",
+      video: "Doraemon.mp4"
+    },
+    {
+      id: 9,
+      title: "Longlegs",
+      genre: "Kinh Dị",
+      type: "Phim Lẻ",
+      country: "Mỹ",
+      rating: "6.3",
+      year: "2024",
+      duration: "101 phút",
+      desc: "Một đặc vụ FBI trẻ tuổi truy đuổi một kẻ giết người hàng loạt bí ẩn với những manh mối kỳ lạ.",
+      poster: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEUmQm_H7Y3sP0TFEeNRgtWQ3Uas2uqKXAXA&s",
+     video: "Doraemon.mp4"
+    },
+    {
+      id: 10,
+      title: "The Substance",
+      genre: "Kinh Dị",
+      type: "Phim Lẻ",
+      country: "Mỹ",
+      rating: "7.4",
+      year: "2024",
+      duration: "140 phút",
+      desc: "Một người phụ nữ sử dụng chất kích thích bí ẩn để tạo ra một phiên bản hoàn hảo hơn của chính mình.",
+      poster: "https://image.tmdb.org/t/p/w400/lqoMzCcZYEFK729d6qzt349fB4o.jpg",
+      video: "Doraemon.mp4"
+    },
+    {
+      id: 11,
+      title: "MaXXXine",
+      genre: "Kinh Dị",
+      type: "Phim Lẻ",
+      country: "Mỹ",
+      rating: "6.5",
+      year: "2024",
+      duration: "103 phút",
+      desc: "Maxine tiếp tục theo đuổi giấc mơ nổi tiếng ở Hollywood trong khi đối mặt với một kẻ sát nhân bí ẩn.",
+      poster: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSf_gVTurQYRwGsEyhRBY-1YYrAX0-RbudrgA&s",
+      video: "Doraemon.mp4"
+    },
+    {
+      id: 12,
+      title: "Crash Landing on You",
+      genre: "Tình Cảm",
+      type: "Phim Bộ",
+      country: "Hàn Quốc",
+      rating: "8.7",
+      year: "2019",
+      duration: "16 tập",
+      desc: "Một nữ tài phiệt Hàn Quốc vô tình hạ cánh xuống Triều Tiên và gặp một sĩ quan quân đội, mở ra câu chuyện tình cảm lãng mạn.",
+      poster: "https://image.tmdb.org/t/p/original/7QOlzF1ofNSSVuMrPHjk34PzGgl.jpg",
+     video: "lovely.mp4"
+    },
+    {
+      id: 13,
+      title: "Lovely Runner",
+      genre: "Tình Cảm",
+      type: "Phim Bộ",
+      country: "Hàn Quốc",
+      rating: "8.6",
+      year: "2024",
+      duration: "16 tập",
+      desc: "Một cô gái quay ngược thời gian để cứu thần tượng của mình, từ đó tạo nên câu chuyện thanh xuân và tình yêu cảm động.",
+      poster: "https://image.tmdb.org/t/p/original/6lJCygJowsbStd8sUqIR3TfxnNr.jpg",
+     video: "lovely.mp4"
+    },
+    {
+      id: 14,
+      title: "The Double",
+      genre: "Tình Cảm",
+      type: "Phim Bộ",
+      country: "Trung Quốc",
+      rating: "8.2",
+      year: "2024",
+      duration: "40 tập",
+      desc: "Một cô gái vượt qua biến cố gia đình, thay đổi thân phận và từng bước lấy lại công bằng cho bản thân.",
+      poster: "https://image.tmdb.org/t/p/original/e8I55rmOmH5fpMtNwpgfbmjXGmO.jpg",
+      trailer: "https://www.youtube.com/embed/KXJsSEsC_d8"
+    },
+    {
+      id: 15,
+      title: "Lật Mặt 7",
+      genre: "Tình Cảm",
+      type: "Phim Lẻ",
+      country: "Việt Nam",
+      rating: "7.2",
+      year: "2024",
+      duration: "138 phút",
+      desc: "Bộ phim Việt Nam khai thác câu chuyện gia đình, tình thân và những lựa chọn khó khăn trong cuộc sống.",
+      poster: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSKfY-7XluSIF2RadKfRgUGLBLZHrzkpOPpfg&s",
+      trailer: "https://www.youtube.com/embed/KXJsSEsC_d8"
+    },
+    {
+      id: 16,
+      title: "Doraemon: Nobita's Earth Symphony",
+      genre: "Hoạt Hình",
+      type: "Phim Lẻ",
+      country: "Nhật Bản",
+      rating: "7.1",
+      year: "2024",
+      duration: "115 phút",
+      desc: "Doraemon và nhóm bạn bước vào chuyến phiêu lưu âm nhạc để bảo vệ Trái Đất khỏi một mối đe dọa mới.",
+      poster: "https://image.tmdb.org/t/p/original/wovo2VvBVDI39S0y6sGenuJ03vd.jpg",
+     video: "Doraemon.mp4"
+    },
+    {
+      id: 17,
+      title: "Detective Conan",
+      genre: "Hành Động",
+      type: "Phim Bộ",
+      country: "Nhật Bản",
+      rating: "8.5",
+      year: "1996",
+      duration: "Nhiều tập",
+      desc: "Thám tử trung học Shinichi Kudo bị teo nhỏ thành Conan và tiếp tục phá các vụ án phức tạp.",
+      poster: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS3SNQbBh3ejgg46KyzllaDtynv5MJYEncJBQ&s",
+      video: "conan.mp4"
+    },
+    {
+      id: 18,
+      title: "Friends",
+      genre: "Hài Hước",
+      type: "Phim Bộ",
+      country: "Mỹ",
+      rating: "8.9",
+      year: "1994",
+      duration: "10 mùa",
+      desc: "Bộ phim hài xoay quanh nhóm bạn thân sống tại New York với những tình huống đời thường vui nhộn.",
+      poster: "https://image.tmdb.org/t/p/w400/f496cm9enuEsZkSPzCwnTESEK5s.jpg",
+      trailer: "https://www.youtube.com/embed/KXJsSEsC_d8"
+    },
+    {
+      id: 19,
+      title: "Nhà Bà Nữ",
+      genre: "Hài Hước",
+      type: "Phim Lẻ",
+      country: "Việt Nam",
+      rating: "7.0",
+      year: "2023",
+      duration: "102 phút",
+      desc: "Bộ phim gia đình Việt Nam đan xen yếu tố hài hước, tình cảm và những mâu thuẫn thế hệ.",
+      poster: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT48Xp1T5wxwsVp41bWUtjlQuaiZKCEK9kXUA&s",
+      trailer: "nhabanu.mp4"
+    }
+  ];
+
+  const STORAGE_KEYS = {
+    USERS: 'cinelight_users',
+    CURRENT_USER: 'cinelight_current_user'
+  };
+
+  let movies = defaultMovies;
+  let currentMovieId = null;
+
+  // ========================================
+  // HÀM TIỆN ÍCH
+  // ========================================
+  function escapeHtml(value) {
+    return String(value)
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;')
+      .replaceAll("'", '&#039;');
+  }
+
+  function showToast(message) {
+    const toast = document.getElementById('toast');
+    toast.textContent = message;
+    toast.classList.add('show');
+
+    clearTimeout(showToast.timer);
+    showToast.timer = setTimeout(function() {
+      toast.classList.remove('show');
+    }, 2600);
+  }
+
+  function getUsers() {
+    return JSON.parse(localStorage.getItem(STORAGE_KEYS.USERS) || '[]');
+  }
+
+  function saveUsers(users) {
+    localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(users));
+  }
+
+  function getCurrentEmail() {
+    return localStorage.getItem(STORAGE_KEYS.CURRENT_USER);
+  }
+
+  function getCurrentUser() {
+    const email = getCurrentEmail();
+    if (!email) return null;
+    return getUsers().find(user => user.email === email) || null;
+  }
+
+  function updateCurrentUser(callback) {
+    const email = getCurrentEmail();
+    if (!email) return null;
+
+    const users = getUsers();
+    const userIndex = users.findIndex(user => user.email === email);
+    if (userIndex === -1) return null;
+
+    callback(users[userIndex]);
+    saveUsers(users);
+    return users[userIndex];
+  }
+
+  function requireLogin(message) {
+    if (getCurrentUser()) return true;
+    showToast(message || 'Bạn cần đăng nhập để dùng chức năng này.');
+    openAuth('login');
+    return false;
+  }
+
+  function findMovie(movieId) {
+    return movies.find(movie => movie.id === Number(movieId));
+  }
+
+  // ========================================
+  // ĐĂNG NHẬP / ĐĂNG KÝ
+  // ========================================
+  function renderAuthActions() {
+    const authActions = document.getElementById('auth-actions');
+    const user = getCurrentUser();
+
+    if (!user) {
+      authActions.innerHTML = `
+        <button class="btn-outline" onclick="openAuth('login')">Đăng nhập</button>
+        <button class="btn-primary" onclick="openAuth('register')" style="padding:9px 14px">Đăng ký</button>
+      `;
+      return;
+    }
+
+    authActions.innerHTML = `
+      <span class="user-greeting">Xin chào, ${escapeHtml(user.name)}</span>
+      <button class="btn-danger" onclick="logout()">Đăng xuất</button>
+    `;
+  }
+
+  function openAuth(mode) {
+    document.getElementById('auth-overlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+    switchAuth(mode || 'login');
+  }
+
+  function closeAuth() {
+    document.getElementById('auth-overlay').classList.remove('open');
+    if (!document.getElementById('modal-overlay').classList.contains('open')) {
+      document.body.style.overflow = '';
+    }
+  }
+
+  function closeAuthOnOverlay(event) {
+    if (event.target === document.getElementById('auth-overlay')) closeAuth();
+  }
+
+  function switchAuth(mode) {
+    const isLogin = mode === 'login';
+    document.getElementById('auth-title').textContent = isLogin ? 'Đăng nhập' : 'Đăng ký';
+    document.getElementById('login-tab').classList.toggle('active', isLogin);
+    document.getElementById('register-tab').classList.toggle('active', !isLogin);
+    document.getElementById('login-form').classList.toggle('active', isLogin);
+    document.getElementById('register-form').classList.toggle('active', !isLogin);
+  }
+
+  function handleRegister(event) {
+    event.preventDefault();
+
+    const name = document.getElementById('register-name').value.trim();
+    const email = document.getElementById('register-email').value.trim().toLowerCase();
+    const password = document.getElementById('register-password').value.trim();
+
+    if (!name || !email || !password) {
+      showToast('Vui lòng nhập đầy đủ thông tin đăng ký.');
+      return;
+    }
+
+    if (password.length < 6) {
+      showToast('Mật khẩu phải có ít nhất 6 ký tự.');
+      return;
+    }
+
+    const users = getUsers();
+    if (users.some(user => user.email === email)) {
+      showToast('Email này đã được đăng ký.');
+      return;
+    }
+
+    users.push({
+      name,
+      email,
+      password,
+      favorites: [],
+      history: [],
+      ratings: {}
+    });
+
+    saveUsers(users);
+    localStorage.setItem(STORAGE_KEYS.CURRENT_USER, email);
+
+    document.getElementById('register-form').reset();
+    closeAuth();
+    renderAuthActions();
+    renderMovies();
+    showToast('Đăng ký thành công. Bạn đã được đăng nhập.');
+  }
+
+  function handleLogin(event) {
+    event.preventDefault();
+
+    const email = document.getElementById('login-email').value.trim().toLowerCase();
+    const password = document.getElementById('login-password').value.trim();
+    const user = getUsers().find(item => item.email === email && item.password === password);
+
+    if (!user) {
+      showToast('Email hoặc mật khẩu không đúng.');
+      return;
+    }
+
+    localStorage.setItem(STORAGE_KEYS.CURRENT_USER, email);
+    document.getElementById('login-form').reset();
+    closeAuth();
+    renderAuthActions();
+    renderMovies();
+    showToast('Đăng nhập thành công.');
+  }
+
+  function logout() {
+    localStorage.removeItem(STORAGE_KEYS.CURRENT_USER);
+    renderAuthActions();
+    renderMovies();
+    goHome({ preventDefault: function(){}, target: document.querySelector('.nav-menu > li > a') });
+    showToast('Bạn đã đăng xuất.');
+  }
+
+  // ========================================
+  // TẠO THẺ PHIM
+  // ========================================
+  function isFavorite(movieId) {
+    const user = getCurrentUser();
+    if (!user) return false;
+    return (user.favorites || []).includes(Number(movieId));
+  }
+
+  function createMovieCard(movie) {
+    const heart = isFavorite(movie.id) ? '❤️' : '🤍';
+    return `
+      <div class="movie-card" onclick="openModal(${movie.id})">
+        <div class="movie-poster-wrap">
+          <img class="movie-poster" src="${escapeHtml(movie.poster)}" alt="${escapeHtml(movie.title)}" />
+          <button class="favorite-badge" onclick="event.stopPropagation(); toggleFavorite(${movie.id})" title="Thêm vào yêu thích">${heart}</button>
+        </div>
+        <div class="movie-info">
+          <div class="movie-title">${escapeHtml(movie.title)}</div>
+          <div class="movie-bottom">
+            <span class="movie-genre">${escapeHtml(movie.year)}</span>
+            <span class="movie-rating">⭐ ${escapeHtml(movie.rating)}</span>
+          </div>
+          <div class="movie-tags">
+            <span class="tag-small">${escapeHtml(movie.genre)}</span>
+            <span class="tag-small">${escapeHtml(movie.type)}</span>
+            <span class="tag-small">${escapeHtml(movie.country)}</span>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  // ========================================
+  // HIỂN THỊ PHIM LÊN TRANG CHỦ
+  // ========================================
+  function renderMovies() {
+    const container = document.getElementById('sections-container');
+    const genres = ['Hành Động', 'Hoạt Hình', 'Kinh Dị', 'Tình Cảm', 'Hài Hước'];
+
+    container.innerHTML = genres.map(function(genre) {
+      const filtered = movies.filter(movie => movie.genre === genre);
+      if (filtered.length === 0) return '';
+
+      return `
+        <section>
+          <div class="section-header">
+            <h2 class="section-title">Phim <span>${escapeHtml(genre)}</span></h2>
+            <a class="see-all" onclick="showFilterResults('Thể loại: ${escapeHtml(genre)}', movies.filter(m => m.genre === '${escapeHtml(genre)}'))">Xem tất cả →</a>
+          </div>
+          <div class="movie-grid">${filtered.map(createMovieCard).join('')}</div>
+        </section>
+      `;
+    }).join('');
+  }
+
+  // ========================================
+  // MỞ MODAL CHI TIẾT PHIM
+  // ========================================
+  function openModal(movieId) {
+    const movie = findMovie(movieId);
+    if (!movie) return;
+
+    currentMovieId = movie.id;
+
+    const player = document.getElementById('modal-player');
+
+document.getElementById('modal-player-wrap').style.display = 'none';
+player.pause();
+player.removeAttribute('src');
+player.load();
+
+document.getElementById('modal-poster').style.display = 'block';
+
+    document.getElementById('modal-poster').src = movie.poster;
+    document.getElementById('modal-poster').alt = movie.title;
+    document.getElementById('modal-title').textContent = movie.title;
+    document.getElementById('modal-tags').innerHTML = `
+      <span class="modal-tag">${escapeHtml(movie.genre)}</span>
+      <span class="modal-tag">${escapeHtml(movie.type)}</span>
+      <span class="modal-tag">${escapeHtml(movie.country)}</span>
+    `;
+    document.getElementById('modal-desc').textContent = movie.desc;
+    document.getElementById('modal-meta').innerHTML = `
+      <span>⭐ ${escapeHtml(movie.rating)}</span>
+      <span>🕐 ${escapeHtml(movie.duration)}</span>
+      <span>📅 ${escapeHtml(movie.year)}</span>
+    `;
+
+    updateFavoriteButton(movie.id);
+    renderRatingStars(movie.id);
+
+    document.getElementById('modal-overlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+ function closeModal() {
+  const player = document.getElementById('modal-player');
+
+  document.getElementById('modal-overlay').classList.remove('open');
+
+  player.pause();
+  player.removeAttribute('src');
+  player.load();
+
+  if (!document.getElementById('auth-overlay').classList.contains('open')) {
+    document.body.style.overflow = '';
+  }
+}
+
+  function closeModalOnOverlay(event) {
+    if (event.target === document.getElementById('modal-overlay')) closeModal();
+  }
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      closeModal();
+      closeAuth();
+    }
+  });
+
+  // ========================================
+  // XEM PHIM + LƯU LỊCH SỬ XEM
+  // ========================================
+function playMovie(movieId) {
+  const movie = findMovie(movieId);
+  if (!movie) return;
+
+  if (!movie.video) {
+    showToast('Phim này chưa có file video trong máy.');
+    return;
+  }
+
+  if (!getCurrentUser()) {
+    showToast('Bạn có thể xem video, nhưng hãy đăng nhập để lưu lịch sử xem.');
+  } else {
+    addToHistory(movie.id);
+  }
+
+  if (!document.getElementById('modal-overlay').classList.contains('open')) {
+    openModal(movie.id);
+  }
+
+  const player = document.getElementById('modal-player');
+
+  document.getElementById('modal-poster').style.display = 'none';
+  document.getElementById('modal-player-wrap').style.display = 'block';
+
+  player.src = movie.video;
+  player.load();
+
+  player.play().catch(function() {
+    showToast('Video đã sẵn sàng. Hãy bấm nút Play để xem.');
+  });
+}
+
+  function addToHistory(movieId) {
+    updateCurrentUser(function(user) {
+      user.history = (user.history || []).filter(item => item.id !== Number(movieId));
+      user.history.unshift({ id: Number(movieId), watchedAt: new Date().toISOString() });
+      user.history = user.history.slice(0, 30);
+    });
+  }
+
+  // ========================================
+  // YÊU THÍCH
+  // ========================================
+  function toggleFavorite(movieId) {
+    if (!requireLogin('Bạn cần đăng nhập để lưu danh sách yêu thích.')) return;
+
+    let added = false;
+    updateCurrentUser(function(user) {
+      user.favorites = user.favorites || [];
+      const id = Number(movieId);
+
+      if (user.favorites.includes(id)) {
+        user.favorites = user.favorites.filter(item => item !== id);
+        added = false;
+      } else {
+        user.favorites.push(id);
+        added = true;
+      }
+    });
+
+    updateFavoriteButton(movieId);
+    renderMovies();
+
+    if (document.getElementById('search-results').style.display === 'block') {
+      const currentTitle = document.getElementById('filter-title').textContent;
+      if (currentTitle.includes('Yêu thích')) showFavorites();
+      if (currentTitle.includes('Lịch sử')) showHistory();
+    }
+
+    showToast(added ? 'Đã thêm vào danh sách yêu thích.' : 'Đã xóa khỏi danh sách yêu thích.');
+  }
+
+  function updateFavoriteButton(movieId) {
+    const btn = document.getElementById('favorite-btn');
+    if (!btn) return;
+
+    if (isFavorite(movieId)) {
+      btn.textContent = '❤️ Đã yêu thích';
+    } else {
+      btn.textContent = '+ Danh Sách';
+    }
+  }
+
+  function showFavorites(event) {
+    if (event) event.preventDefault();
+    if (!requireLogin('Bạn cần đăng nhập để xem danh sách yêu thích.')) return;
+
+    const user = getCurrentUser();
+    const favoriteIds = user.favorites || [];
+    const favoriteMovies = favoriteIds.map(id => findMovie(id)).filter(Boolean);
+
+    showFilterResults('Danh sách yêu thích', favoriteMovies, favoriteMovies.length ? 'Các phim bạn đã bấm lưu vào danh sách yêu thích.' : 'Bạn chưa thêm phim nào vào danh sách yêu thích.');
+    if (event) setActiveLink(event.target);
+  }
+
+  // ========================================
+  // LỊCH SỬ XEM
+  // ========================================
+  function showHistory(event) {
+    if (event) event.preventDefault();
+    if (!requireLogin('Bạn cần đăng nhập để xem lịch sử xem.')) return;
+
+    const user = getCurrentUser();
+    const history = user.history || [];
+    const historyMovies = history.map(item => findMovie(item.id)).filter(Boolean);
+
+    showFilterResults('Lịch sử xem', historyMovies, historyMovies.length ? 'Các phim bạn đã bấm nút Xem Ngay sẽ được lưu tại đây.' : 'Bạn chưa xem phim nào.');
+    if (event) setActiveLink(event.target);
+  }
+
+  // ========================================
+  // ĐÁNH GIÁ PHIM
+  // ========================================
+  function getUserRating(movieId) {
+    const user = getCurrentUser();
+    if (!user || !user.ratings) return 0;
+    return Number(user.ratings[movieId] || 0);
+  }
+
+  function renderRatingStars(movieId) {
+    const selected = getUserRating(movieId);
+    const stars = [];
+
+    for (let i = 1; i <= 5; i++) {
+      stars.push(`<button class="star-btn ${i <= selected ? 'active' : ''}" onclick="rateMovie(${movieId}, ${i})">★</button>`);
+    }
+
+    const text = selected ? `Bạn đã đánh giá ${selected}/5 sao` : 'Chưa đánh giá';
+    document.getElementById('rating-stars').innerHTML = stars.join('') + `<span class="rating-text">${text}</span>`;
+  }
+
+  function rateMovie(movieId, score) {
+    if (!requireLogin('Bạn cần đăng nhập để đánh giá phim.')) return;
+
+    updateCurrentUser(function(user) {
+      user.ratings = user.ratings || {};
+      user.ratings[movieId] = Number(score);
+    });
+
+    renderRatingStars(movieId);
+    showToast('Đã lưu đánh giá của bạn.');
+  }
+
+  // ========================================
+  // TÌM KIẾM PHIM
+  // ========================================
+  function searchMovies(keyword) {
+    keyword = keyword.trim().toLowerCase();
+
+    if (keyword === '') {
+      document.getElementById('main-content').style.display = 'block';
+      document.getElementById('search-results').style.display = 'none';
+      document.getElementById('filter-title').textContent = '';
+      return;
+    }
+
+    const results = movies.filter(movie =>
+      movie.title.toLowerCase().includes(keyword) ||
+      movie.genre.toLowerCase().includes(keyword) ||
+      movie.type.toLowerCase().includes(keyword) ||
+      movie.country.toLowerCase().includes(keyword)
+    );
+
+    showFilterResults('Kết quả tìm kiếm: "' + keyword + '"', results);
+  }
+
+  // ========================================
+  // LỌC THEO THỂ LOẠI / PHIM BỘ / PHIM LẺ / QUỐC GIA
+  // ========================================
+  function filterByGenre(event, genre) {
+    event.preventDefault();
+    const results = movies.filter(movie => movie.genre === genre);
+    showFilterResults('Thể loại: ' + genre, results);
+    setActiveLink(event.target);
+  }
+
+  function filterByType(event, type, country) {
+    event.preventDefault();
+    const results = movies.filter(movie => movie.type === type && movie.country === country);
+    showFilterResults(type + ' · ' + country, results, 'Kết quả được lọc bằng thuộc tính type và country đã bổ sung trong dữ liệu phim.');
+    setActiveLink(event.target);
+  }
+
+  function filterByCountry(event, country) {
+    event.preventDefault();
+    const results = movies.filter(movie => movie.country === country);
+    showFilterResults('Quốc gia: ' + country, results);
+    setActiveLink(event.target);
+  }
+
+  function showFilterResults(title, results, note) {
+    const mainContent = document.getElementById('main-content');
+    const searchResults = document.getElementById('search-results');
+    const searchGrid = document.getElementById('search-grid');
+    const filterTitle = document.getElementById('filter-title');
+    const filterNote = document.getElementById('filter-note');
+
+    mainContent.style.display = 'none';
+    searchResults.style.display = 'block';
+    filterTitle.textContent = title;
+    filterNote.textContent = note || '';
+
+    if (results.length === 0) {
+      searchGrid.innerHTML = `<div class="empty-state">Không có phim phù hợp với mục này. Bạn có thể bổ sung thêm phim mới vào mảng dữ liệu <strong>defaultMovies</strong>.</div>`;
+    } else {
+      searchGrid.innerHTML = results.map(createMovieCard).join('');
+    }
+  }
+
+  // ========================================
+  // VỀ TRANG CHỦ + ACTIVE MENU
+  // ========================================
+  function goHome(event) {
+    event.preventDefault();
+
+    document.getElementById('main-content').style.display = 'block';
+    document.getElementById('search-results').style.display = 'none';
+    document.getElementById('search-input').value = '';
+    document.getElementById('filter-title').textContent = '';
+    document.getElementById('filter-note').textContent = '';
+
+    if (event.target) setActiveLink(event.target);
+  }
+
+  function setActiveLink(clickedLink) {
+    document.querySelectorAll('.nav-menu > li > a').forEach(function(a) {
+      a.classList.remove('active');
+    });
+
+    const parentLi = clickedLink.closest ? clickedLink.closest('.nav-menu > li') : null;
+    if (parentLi) parentLi.querySelector('a').classList.add('active');
+  }
+
+  // ========================================
+  // KHỞI TẠO TRANG
+  // ========================================
+  renderAuthActions();
+  renderMovies();
+</script>
+</body>
+</html>
